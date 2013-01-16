@@ -12,7 +12,7 @@ $(document).ready(function () {
 					var arrayOfObjects = data.resultsPage.results.venue;
 					for (var i = arrayOfObjects.length - 1; i >= 0; i--) {
 						if(arrayOfObjects[i].website) {
-							$("#container").append("<div><a href=" + arrayOfObjects[i].website + ">" + arrayOfObjects[i].website + "</a></div>");
+							$("#container").append("<div><a target='_blank' href=" + arrayOfObjects[i].website + ">" + arrayOfObjects[i].website + "</a></div>");
 						}
 					}
 				});
