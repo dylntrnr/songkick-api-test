@@ -41,9 +41,17 @@ $(document).ready(function () {
 
 	var	getArtistGigography = function (artistId) {
 		$.getJSON("http://api.songkick.com/api/3.0/artists/" + artistId + "/gigography.json?apikey=vDtvjogcJwz6gi6J&jsoncallback=?", function(data){
-				console.log(data);
-				
+
+			if(data.resultsPage.results.event) {
+				for (var i = 0; i < data.resultsPage.results.event.length; i++) {
+					console.log(data.resultsPage.results.event[i].venue.id);
+				}
+			} else {
+				console.log("nothing was returned");
+			}
+
 			});
+
 	};
 
 	$("#search").on("click", search);
