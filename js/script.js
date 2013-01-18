@@ -6,27 +6,32 @@ $(document).ready(function () {
 		var city = $("#term").val();
 		var artist = $("#term2").val();
 
-		if(artist) {
-			getArtistID(artist);
-		}
-		
-		if(city) {
+		if(artist && city) {
+			getWebsitesOfArtistForCity(city, artist);
+		} else if(artist && !city) {
+			getArtistIDAndCallGigo(artist);
+		} else if(city) {
 			getWebsites(city);
 			
 		} else {
-			alert("Please enter a city like: san diego");
+			alert("Please enter a city like: san diego or artist like: larusso");
 		}
 
 	};
 
-	var getArtistID = function (artist) {
+	var getArtistIDAndCallGigo = function (artist) {
+		var artistId;
 		$.getJSON("http://api.songkick.com/api/3.0/search/artists.json?query=" + artist + "&page=1&apikey=vDtvjogcJwz6gi6J&jsoncallback=?", function(data){
-				var artistId = data.resultsPage.results.artist[0].id;
+				artistId = data.resultsPage.results.artist[0].id;
 				
-				getArtistGigography(artistId);
+				getArtistGigographyAndCallVenueInfo(artistId);
 			});
 
+		return artistId;
+
 	};
+
+	
 
 	var getWebsites = function  (city) {
 		$.getJSON("http://api.songkick.com/api/3.0/search/venues.json?query=" + city + "&page=1&apikey=vDtvjogcJwz6gi6J&jsoncallback=?", function(data){
@@ -40,7 +45,7 @@ $(document).ready(function () {
 			});
 	};
 
-	var	getArtistGigography = function (artistId) {
+	var	getArtistGigographyAndCallVenueInfo = function (artistId) {
 		$.getJSON("http://api.songkick.com/api/3.0/artists/" + artistId + "/gigography.json?apikey=vDtvjogcJwz6gi6J&jsoncallback=?", function(data){
 
 			if(data.resultsPage.results.event) {
@@ -51,9 +56,11 @@ $(document).ready(function () {
 				console.log("nothing was returned");
 			}
 
-			});
+		});
 
 	};
+
+
 
 	var fromIdGetVenueInfo = function (venueId) {
 		if(venueId) {
@@ -72,6 +79,10 @@ $(document).ready(function () {
 			console.log("Returned null");
 		}
 
+	};
+
+	var getWebsitesOfArtistForCity = function (city, artist) {
+		alert("Having a city and band name doesn't work quite yet. choose one or the other");
 	};
 
 	$("#search").on("click", search);
