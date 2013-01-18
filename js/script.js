@@ -6,13 +6,20 @@ $(document).ready(function () {
 		$("#hidden").removeClass("hide");
 		var city = $("#term").val();
 		var artist = $("#term2").val();
+		var number = $("#term3").val();
 
 		if(artist && city) {
 			getWebsitesOfArtistForCity(city, artist);
 		} else if(artist && !city) {
 			getArtistIDAndCallGigo(artist);
 		} else if(city) {
-			getWebsites(city);
+			if(number) {
+				getWebsites(city, number);
+
+			} else {
+
+				getWebsites(city);
+			}
 			
 		} else {
 			alert("Please enter a city like: san diego or artist like: larusso");
@@ -34,17 +41,36 @@ $(document).ready(function () {
 
 	
 
-	var getWebsites = function  (city) {
-		$.getJSON("http://api.songkick.com/api/3.0/search/venues.json?query=" + city + "&page=1&apikey=vDtvjogcJwz6gi6J&jsoncallback=?", function(data){
-				var arrayOfObjects = data.resultsPage.results.venue;
-				for (var i = arrayOfObjects.length - 1; i >= 0; i--) {
-					if(arrayOfObjects[i].website) {
-						$("#container").append("<div><a target='_blank' href=" + $.trim(arrayOfObjects[i].website) + ">" + arrayOfObjects[i].website + "</a></div>");
-					}
+	var getWebsites = function  (city, pageNumber) {
 
-				}
-		$("#hidden").addClass("hide");
-		});
+		if(!pageNumber) {
+			$.getJSON("http://api.songkick.com/api/3.0/search/venues.json?query=" + city + "&page=1&apikey=vDtvjogcJwz6gi6J&jsoncallback=?", function(data){
+					var arrayOfObjects = data.resultsPage.results.venue;
+					var numberOfPages = Math.floor(data.resultsPage.totalEntries / data.resultsPage.perPage);
+					for (var i = arrayOfObjects.length - 1; i >= 0; i--) {
+						if(arrayOfObjects[i].website) {
+							$("#container").append("<div><a target='_blank' href=" + $.trim(arrayOfObjects[i].website) + ">" + arrayOfObjects[i].website + "</a></div>");
+						}
+
+					}
+				getWebsites(city, numberOfPages);
+			});
+		} else if (pageNumber > 1) {
+			$.getJSON("http://api.songkick.com/api/3.0/search/venues.json?query=" + city + "&page=" + pageNumber + "&apikey=vDtvjogcJwz6gi6J&jsoncallback=?", function(data){
+					var arrayOfObjects = data.resultsPage.results.venue;
+					for (var i = arrayOfObjects.length - 1; i >= 0; i--) {
+						if(arrayOfObjects[i].website) {
+							$("#container").append("<div><a target='_blank' href=" + $.trim(arrayOfObjects[i].website) + ">" + arrayOfObjects[i].website + "</a></div>");
+						}
+
+					}
+				getWebsites(city, (pageNumber - 1));
+			});
+		} else{
+			console.log("ended recursive loop");
+
+			$("#hidden").addClass("hide");
+		}
 
 	};
 
