@@ -2,7 +2,8 @@ $(document).ready(function () {
 
 
 	var search = function () {
-		$("div").html("");
+		$("#container").html("");
+		$("#hidden").removeClass("hide");
 		var city = $("#term").val();
 		var artist = $("#term2").val();
 
@@ -42,7 +43,9 @@ $(document).ready(function () {
 					}
 
 				}
-			});
+		$("#hidden").addClass("hide");
+		});
+
 	};
 
 	var	getArtistGigographyAndCallVenueInfo = function (artistId) {
@@ -79,6 +82,9 @@ $(document).ready(function () {
 			console.log("Returned null");
 		}
 
+
+		$("#hidden").addClass("hide");
+
 	};
 
 	var getWebsitesOfArtistForCity = function (city, artist) {
@@ -86,4 +92,14 @@ $(document).ready(function () {
 	};
 
 	$("#search").on("click", search);
+	$('#term').keyup(function(event){
+		if(event.keyCode == 13){
+			search();
+		}
+	});
+	$('#term2').keyup(function(event){
+		if(event.keyCode == 13){
+			search();
+		}
+	});
 });
