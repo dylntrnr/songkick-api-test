@@ -35,6 +35,7 @@ $(document).ready(function () {
 					if(arrayOfObjects[i].website) {
 						$("#container").append("<div><a target='_blank' href=" + $.trim(arrayOfObjects[i].website) + ">" + arrayOfObjects[i].website + "</a></div>");
 					}
+
 				}
 			});
 	};
@@ -62,7 +63,9 @@ $(document).ready(function () {
 				if(venueObject.website) {
 					$("#container").append("<div><a target='_blank' href=" + $.trim(venueObject.website) + ">" + venueObject.website + "</a></div>");
 				}
-				
+				if(venueObject.description) {
+						$("#container").append("<div><strong>" + venueObject.description + "</strong></div>");
+					}
 
 			});
 		} else {
