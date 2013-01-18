@@ -44,13 +44,30 @@ $(document).ready(function () {
 
 			if(data.resultsPage.results.event) {
 				for (var i = 0; i < data.resultsPage.results.event.length; i++) {
-					console.log(data.resultsPage.results.event[i].venue.id);
+				fromIdGetVenueInfo(data.resultsPage.results.event[i].venue.id);
 				}
 			} else {
 				console.log("nothing was returned");
 			}
 
 			});
+
+	};
+
+	var fromIdGetVenueInfo = function (venueId) {
+		if(venueId) {
+			$.getJSON("http://api.songkick.com/api/3.0/venues/" + venueId + ".json?apikey=vDtvjogcJwz6gi6J&jsoncallback=?", function(data){
+
+				var venueObject = data.resultsPage.results.venue;
+				if(venueObject.website) {
+					$("#container").append("<div><a target='_blank' href=" + $.trim(venueObject.website) + ">" + venueObject.website + "</a></div>");
+				}
+				
+
+			});
+		} else {
+			console.log("Returned null");
+		}
 
 	};
 
