@@ -1,25 +1,22 @@
 $(document).ready(function () {
 
+	Parse.initialize("HnvAxdeWqP9ixgKMmYWOK3u2CLSud28sojjqF17Z", "qcYcwk1KuUx3EDbjr3jDBbsNT6eYH3JeZLNhCalG");
+
+	var VenuesObject = Parse.Object.extend("VenuesObject");
+	var venuesObject = new VenuesObject();
 
 	var search = function () {
 		$("#container").html("");
 		$("#hidden").removeClass("hide");
 		var city = $("#term").val();
 		var artist = $("#term2").val();
-		var number = $("#term3").val();
 
 		if(artist && city) {
 			getWebsitesOfArtistForCity(city, artist);
 		} else if(artist && !city) {
 			getArtistIDAndCallGigo(artist);
 		} else if(city) {
-			if(number) {
-				getWebsites(city, number);
-
-			} else {
-
-				getWebsites(city);
-			}
+			getWebsites(city);
 			
 		} else {
 			alert("Please enter a city like: san diego or artist like: larusso");
@@ -31,7 +28,6 @@ $(document).ready(function () {
 		var artistId;
 		$.getJSON("http://api.songkick.com/api/3.0/search/artists.json?query=" + artist + "&page=1&apikey=vDtvjogcJwz6gi6J&jsoncallback=?", function(data){
 				artistId = data.resultsPage.results.artist[0].id;
-				
 				getArtistGigographyAndCallVenueInfo(artistId);
 			});
 
@@ -42,34 +38,25 @@ $(document).ready(function () {
 
 	var getWebsites = function  (city, pageNumber) {
 
+		var template = $("#testTpl").html();
+		$("#page").html(pageNumber);
+
 		if(!pageNumber) {
-			$.getJSON("http://api.songkick.com/api/3.0/search/venues.json?query=" + city + "&page=1&apikey=vDtvjogcJwz6gi6J&jsoncallback=?", function(data){
-					var arrayOfObjects = data.resultsPage.results.venue;
-					var numberOfPages = Math.floor(data.resultsPage.totalEntries / data.resultsPage.perPage);
-					for (var i = arrayOfObjects.length - 1; i >= 0; i--) {
-						if(arrayOfObjects[i].website) {
-							$("#container").append("<div><a target='_blank' href=" + $.trim(arrayOfObjects[i].website) + ">" + arrayOfObjects[i].website + "</a></div>");
-						}
-
-					}
-				getWebsites(city, numberOfPages);
-			});
-		} else if (pageNumber > 1) {
-			$.getJSON("http://api.songkick.com/api/3.0/search/venues.json?query=" + city + "&page=" + pageNumber + "&apikey=vDtvjogcJwz6gi6J&jsoncallback=?", function(data){
-					var arrayOfObjects = data.resultsPage.results.venue;
-					for (var i = arrayOfObjects.length - 1; i >= 0; i--) {
-						if(arrayOfObjects[i].website) {
-							$("#container").append("<div><a target='_blank' href=" + $.trim(arrayOfObjects[i].website) + ">" + arrayOfObjects[i].website + "</a></div>");
-						}
-
-					}
-				getWebsites(city, (pageNumber - 1));
-			});
-		} else{
-			console.log("ended recursive loop");
-
-			$("#hidden").addClass("hide");
+			pageNumber = 1;
 		}
+
+
+		
+		$.getJSON("http://api.songkick.com/api/3.0/search/venues.json?query=" + city + "&page=" + pageNumber + "&apikey=vDtvjogcJwz6gi6J&jsoncallback=?", function(data){
+				var arrayOfObjects = data.resultsPage.results.venue;
+				var numberOfPages = Math.floor(data.resultsPage.totalEntries / data.resultsPage.perPage);
+				var html = Mustache.to_html(template, data.resultsPage.results);
+				$("#container").html(html);
+
+		});
+	
+		$("#hidden").addClass("hide");
+		
 
 	};
 
@@ -151,6 +138,7 @@ $(document).ready(function () {
 					$("#container").append("<div><a target='_blank' href=" + $.trim(venueObject.website) + ">" + venueObject.website + "</a></div>");
 				}
 				
+				venuesObject.save("website", venueObject.website);
 
 			});
 		} else {
@@ -181,4 +169,6 @@ $(document).ready(function () {
 			search();
 		}
 	});
+
+	
 });
