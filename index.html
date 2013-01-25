@@ -17,11 +17,12 @@
 <input type="text" id="term2">put in a artist like you to find more accurate venue results
 <br>
 <button id="search">search</button>
+<button id="pageBtn" class="hide">page+</button>
 <div id="hidden" class="hide"><h2>Loading...</h2></div>
 <div id="container"></div>
 
 <script id="testTpl" type="text/template">
-	<ul>{{#venue}}<li><a target='_blank'  href="{{website}}">{{displayName}}</a> Phone Number: {{phone}}</li>{{/venue}}</ul>
+	<ul>{{#venue}}<li><a target='_blank'  href="{{website}}">{{website}}</a> {{displayName}} {{phone}}</li>{{/venue}}</ul>
 </script>
 
 </body>
